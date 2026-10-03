@@ -1,0 +1,18 @@
+# Build ciktilari
+build/
+*.o
+*.d
+*.elf
+*.bin
+*.hex
+*.map
+*.su
+*.lst
+
+# Editor / OS
+.vscode/ipch/
+*.bak
+*.orig
+*~
+.DS_Store
+Thumbs.db
