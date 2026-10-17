@@ -80,7 +80,12 @@
                 "pattern": [{ "regexp": ".", "file": 1, "location": 2, "message": 3 }],
                 "background": {
                     "activeOnStart": true,
-                    "beginsPattern": ".*",
+                    // beginsPattern must NOT match any line LinkServer prints
+                    // after it is ready, or the task flips back to "running"
+                    // and the launch waits forever. "Selected probe" appears
+                    // once, early; the trailing "INFO: [stub ...] LinkServer
+                    // RedlinkMulti Driver" line is why ".*" cannot be used.
+                    "beginsPattern": "Selected probe",
                     "endsPattern": "GDB server listening on port"
                 }
             },

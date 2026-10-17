@@ -2,9 +2,11 @@
     "version": "0.2.0",
     "configurations": [
         {
-            // Needs only the C/C++ extension. Builds, clears any orphaned
-            // LinkServer, then starts its own gdbserver.
-            "name": "Debug (LinkServer, cppdbg)",
+            // Default. Starts LinkServer itself, so no background task is
+            // involved - nothing can hang waiting for a "server ready" signal.
+            // svdPath gives the MCU Peripheral Viewer the register map, so
+            // SCG0->CSR[SCS] and friends show up by name with decoded fields.
+            "name": "Debug (LinkServer)",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/mcxn947-bare-metal.elf",
@@ -14,12 +16,13 @@
             "miDebuggerServerAddress": "localhost:3333",
             "debugServerPath": "C:/nxp/LinkServer_26.6.137/LinkServer.exe",
             "debugServerArgs": "gdbserver --gdb-port 3333 MCXN947:FRDM-MCXN947",
-            // LinkServer prints this on stdout when ready; its INFO lines go
-            // to stderr, hence filterStderr.
+            // LinkServer prints this on stdout once it is ready; its INFO
+            // lines go to stderr, hence filterStderr.
             "serverStarted": "GDB server listening on port",
             "filterStderr": true,
             "filterStdout": false,
             "stopAtConnect": true,
+            "svdPath": "${workspaceFolder}/svd/MCXN947cm33_core0.xml",
             "preLaunchTask": "prep-debug",
             "setupCommands": [
                 { "text": "-enable-pretty-printing", "ignoreFailures": true },
@@ -32,10 +35,10 @@
             ]
         },
         {
-            // Preferred: reads svd/ and shows peripheral registers by name with
-            // decoded bit fields. The gdbserver task starts the server and
-            // itself depends on prep-debug, so one F5 does everything.
-            "name": "Debug (cortex-debug + SVD)",
+            // Backup. Cortex-Debug has no native LinkServer support, so the
+            // server comes from the "gdbserver" background task. Use this only
+            // if the config above misbehaves.
+            "name": "Debug (cortex-debug, external server)",
             "type": "cortex-debug",
             "request": "launch",
             "servertype": "external",
@@ -47,10 +50,7 @@
             "gdbPath": "C:/Users/mertcivan/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-mingw-w64-x86_64-arm-none-eabi/bin/arm-none-eabi-gdb.exe",
             "runToEntryPoint": "main",
             "preLaunchTask": "gdbserver",
-            "overrideLaunchCommands": [
-                "load",
-                "monitor reset"
-            ]
+            "overrideLaunchCommands": ["load", "monitor reset"]
         }
     ]
 }
