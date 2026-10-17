@@ -1,6 +1,6 @@
 {
     // The Makefile uses POSIX recipes (rm -rf, mkdir -p), which cmd.exe and
-    // PowerShell do not provide. Every task therefore runs through Git Bash.
+    // PowerShell do not provide. Build tasks therefore run through Git Bash.
     "version": "2.0.0",
     "options": {
         "cwd": "${workspaceFolder}",
@@ -42,22 +42,45 @@
             "label": "flash",
             "type": "shell",
             "command": "make flash",
-            "dependsOn": "build",
+            "dependsOn": "stop-debug-servers",
             "problemMatcher": [],
             "presentation": { "reveal": "always", "panel": "dedicated" }
         },
         {
+            // The MCU-Link probe can only be claimed by one debugger at a time,
+            // and a LinkServer left running holds both the probe and port 3333.
+            // Every debug launch clears them first, so a crashed or orphaned
+            // session never blocks the next one.
+            "label": "stop-debug-servers",
+            "type": "shell",
+            "command": "Get-Process LinkServer,redlinkserv,crt_emu_cm_redlink -ErrorAction SilentlyContinue | Stop-Process -Force; Start-Sleep -Milliseconds 700; exit 0",
+            "options": {
+                "shell": {
+                    "executable": "powershell.exe",
+                    "args": ["-NoProfile", "-Command"]
+                }
+            },
+            "problemMatcher": [],
+            "presentation": { "reveal": "silent", "panel": "shared" }
+        },
+        {
+            "label": "prep-debug",
+            "dependsOrder": "sequence",
+            "dependsOn": ["stop-debug-servers", "build"],
+            "problemMatcher": []
+        },
+        {
             // Background server for the cortex-debug "external" launch config.
-            // The cppdbg config starts its own server and does not need this.
             "label": "gdbserver",
             "type": "shell",
             "command": "'C:/nxp/LinkServer_26.6.137/LinkServer.exe' gdbserver --gdb-port 3333 MCXN947:FRDM-MCXN947",
+            "dependsOn": "prep-debug",
             "isBackground": true,
             "problemMatcher": {
                 "pattern": [{ "regexp": ".", "file": 1, "location": 2, "message": 3 }],
                 "background": {
                     "activeOnStart": true,
-                    "beginsPattern": ".*LinkServer.*",
+                    "beginsPattern": ".*",
                     "endsPattern": "GDB server listening on port"
                 }
             },
