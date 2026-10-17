@@ -1,0 +1,16 @@
+{
+    // The build needs a POSIX shell. The Makefile now points make at Git Bash
+    // by itself, but defaulting the integrated terminal to bash keeps what you
+    // type by hand consistent with what the tasks run.
+    "terminal.integrated.defaultProfile.windows": "Git Bash",
+    "terminal.integrated.profiles.windows": {
+        "Git Bash": {
+            "path": "C:\\Program Files\\Git\\bin\\bash.exe",
+            "icon": "terminal-bash"
+        }
+    },
+    "files.associations": {
+        "*.ld": "linkerscript"
+    },
+    "C_Cpp.default.configurationProvider": "ms-vscode.cpptools"
+}

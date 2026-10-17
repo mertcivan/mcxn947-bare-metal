@@ -17,6 +17,23 @@
 TARGET := mcxn947-bare-metal
 BUILD  := build
 
+# ---- Shell -----------------------------------------------------------------
+# Recipes here are POSIX (rm -rf, mkdir -p, VAR=x cmd). cmd.exe cannot run
+# them, so `make` from PowerShell or cmd fails in confusing ways. Point make
+# at Git Bash instead; the 8.3 path avoids the space in "Program Files".
+ifeq ($(OS),Windows_NT)
+  GITBASH := $(firstword $(wildcard C:/PROGRA~1/Git/bin/bash.exe \
+                                    C:/PROGRA~2/Git/bin/bash.exe))
+  ifneq ($(GITBASH),)
+    SHELL       := $(GITBASH)
+    .SHELLFLAGS := -c
+    # make bypasses SHELL and calls CreateProcess directly for recipe lines
+    # with no shell metacharacters, so plain `rm -rf build` still needs rm to
+    # be findable. Git ships the POSIX tools here.
+    export PATH := $(dir $(GITBASH))../usr/bin;$(PATH)
+  endif
+endif
+
 # ---- Toolchain -------------------------------------------------------------
 ifdef ARMGCC_DIR
   CROSS := $(ARMGCC_DIR)/bin/arm-none-eabi-
