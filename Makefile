@@ -95,7 +95,7 @@ endif
 
 # =============================================================================
 
-.PHONY: all clean flash erase size
+.PHONY: all clean flash erase size debug
 .DEFAULT_GOAL := all
 
 all: $(BUILD)/$(TARGET).elf $(BUILD)/$(TARGET).bin $(BUILD)/$(TARGET).hex
@@ -129,6 +129,14 @@ flash: $(BUILD)/$(TARGET).elf
 
 erase:
 	$(LINKSERVER) flash $(PROBE_ARG) $(DEVICE) erase
+
+# Terminal debug oturumu: LinkServer gdbserver + arm-none-eabi-gdb.
+#   make debug                 yukle, reset, main'de dur
+#   make debug GDBCMD=attach   calisani kesme, sadece bagan
+# Sunucu, gdb nasil cikarsa ciksin birlikte kapanir (bkz. tools/debug.sh).
+debug: $(BUILD)/$(TARGET).elf
+	@LINKSERVER="$(LINKSERVER)" DEVICE="$(DEVICE)" GDB="$(CROSS)gdb" \
+	 ELF="$<" bash tools/debug.sh
 
 clean:
 	@rm -rf $(BUILD)
