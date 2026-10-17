@@ -1,0 +1,67 @@
+{
+    // The Makefile uses POSIX recipes (rm -rf, mkdir -p), which cmd.exe and
+    // PowerShell do not provide. Every task therefore runs through Git Bash.
+    "version": "2.0.0",
+    "options": {
+        "cwd": "${workspaceFolder}",
+        "shell": {
+            "executable": "C:\\Program Files\\Git\\bin\\bash.exe",
+            "args": ["-c"]
+        }
+    },
+    "tasks": [
+        {
+            "label": "build",
+            "type": "shell",
+            "command": "make",
+            "group": { "kind": "build", "isDefault": true },
+            "problemMatcher": ["$gcc"],
+            "presentation": { "reveal": "always", "panel": "dedicated", "clear": true }
+        },
+        {
+            "label": "clean",
+            "type": "shell",
+            "command": "make clean",
+            "problemMatcher": []
+        },
+        {
+            "label": "rebuild",
+            "type": "shell",
+            "command": "make clean && make",
+            "group": "build",
+            "problemMatcher": ["$gcc"],
+            "presentation": { "reveal": "always", "panel": "dedicated", "clear": true }
+        },
+        {
+            "label": "size",
+            "type": "shell",
+            "command": "make size",
+            "problemMatcher": []
+        },
+        {
+            "label": "flash",
+            "type": "shell",
+            "command": "make flash",
+            "dependsOn": "build",
+            "problemMatcher": [],
+            "presentation": { "reveal": "always", "panel": "dedicated" }
+        },
+        {
+            // Background server for the cortex-debug "external" launch config.
+            // The cppdbg config starts its own server and does not need this.
+            "label": "gdbserver",
+            "type": "shell",
+            "command": "'C:/nxp/LinkServer_26.6.137/LinkServer.exe' gdbserver --gdb-port 3333 MCXN947:FRDM-MCXN947",
+            "isBackground": true,
+            "problemMatcher": {
+                "pattern": [{ "regexp": ".", "file": 1, "location": 2, "message": 3 }],
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": ".*LinkServer.*",
+                    "endsPattern": "GDB server listening on port"
+                }
+            },
+            "presentation": { "reveal": "silent", "panel": "dedicated" }
+        }
+    ]
+}

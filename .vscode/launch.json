@@ -1,0 +1,53 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            // Works with only the C/C++ extension installed. Starts LinkServer
+            // itself, so no separate task is needed.
+            "name": "Debug (LinkServer, cppdbg)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/mcxn947-bare-metal.elf",
+            "cwd": "${workspaceFolder}",
+            "MIMode": "gdb",
+            "miDebuggerPath": "C:/Users/mertcivan/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-mingw-w64-x86_64-arm-none-eabi/bin/arm-none-eabi-gdb.exe",
+            "miDebuggerServerAddress": "localhost:3333",
+            "debugServerPath": "C:/nxp/LinkServer_26.6.137/LinkServer.exe",
+            "debugServerArgs": "gdbserver --gdb-port 3333 MCXN947:FRDM-MCXN947",
+            // LinkServer prints this on stdout once it is ready; its INFO
+            // lines go to stderr, hence filterStderr.
+            "serverStarted": "GDB server listening on port",
+            "filterStderr": true,
+            "filterStdout": false,
+            "stopAtConnect": true,
+            "preLaunchTask": "build",
+            "setupCommands": [
+                { "text": "-enable-pretty-printing", "ignoreFailures": true },
+                { "text": "set mem inaccessible-by-default off", "ignoreFailures": true }
+            ],
+            "postRemoteConnectCommands": [
+                { "text": "load" },
+                { "text": "monitor reset" }
+            ]
+        },
+        {
+            // Preferred once the Cortex-Debug extension is installed:
+            //     code --install-extension marus25.cortex-debug
+            // It reads svd/ and shows peripheral registers by name with their
+            // bit fields decoded - which is the whole point at this level.
+            // Start the "gdbserver" task first (it is wired as preLaunchTask).
+            "name": "Debug (LinkServer, cortex-debug + SVD)",
+            "type": "cortex-debug",
+            "request": "launch",
+            "servertype": "external",
+            "gdbTarget": "localhost:3333",
+            "cwd": "${workspaceFolder}",
+            "executable": "${workspaceFolder}/build/mcxn947-bare-metal.elf",
+            "device": "MCXN947",
+            "svdFile": "${workspaceFolder}/svd/MCXN947cm33_core0.xml",
+            "gdbPath": "C:/Users/mertcivan/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-mingw-w64-x86_64-arm-none-eabi/bin/arm-none-eabi-gdb.exe",
+            "runToEntryPoint": "main",
+            "preLaunchTask": "gdbserver"
+        }
+    ]
+}

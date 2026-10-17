@@ -1,0 +1,35 @@
+{
+    // Mirrors INCLUDES and DEFS from the Makefile. If you change them there,
+    // change them here too - this file only feeds IntelliSense, not the build.
+    "version": 4,
+    "configurations": [
+        {
+            "name": "MCXN947 cm33_core0",
+            "includePath": [
+                "${workspaceFolder}/src",
+                "${workspaceFolder}/src/driver",
+                "${workspaceFolder}/src/hal",
+                "${workspaceFolder}/src/bsp",
+                "${workspaceFolder}/src/scheduler",
+                "${workspaceFolder}/src/application",
+                "${workspaceFolder}/vendor/CMSIS",
+                "${workspaceFolder}/vendor/MCXN947",
+                "${workspaceFolder}/vendor/MCXN947/periph"
+            ],
+            "defines": [
+                "CPU_MCXN947VDF_cm33_core0",
+                "MCXN947_cm33_core0_SERIES",
+                "__STARTUP_CLEAR_BSS"
+            ],
+            "compilerPath": "C:/Users/mertcivan/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-mingw-w64-x86_64-arm-none-eabi/bin/arm-none-eabi-gcc.exe",
+            "compilerArgs": [
+                "-mcpu=cortex-m33",
+                "-mthumb",
+                "-mfloat-abi=hard",
+                "-mfpu=fpv5-sp-d16"
+            ],
+            "cStandard": "gnu11",
+            "intelliSenseMode": "gcc-arm"
+        }
+    ]
+}
