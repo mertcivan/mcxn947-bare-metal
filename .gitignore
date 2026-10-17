@@ -16,3 +16,14 @@ build/
 *~
 .DS_Store
 Thumbs.db
+
+# MCUXpresso IDE / Eclipse metadata
+# Kept out of the repo on purpose: src/ and the Makefile stay the single
+# source of truth, so the project still builds with nothing but make.
+.project
+.cproject
+.settings/
+.metadata/
+Debug/
+Release/
+*.launch
